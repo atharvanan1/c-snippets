@@ -9,5 +9,5 @@ TEST(BoolTestSuite, ReturnTrue) {
 }
 
 TEST(BoolTestSuite, ReturnFalse) {
-    ASSERT_EQ(true, ret_false());
+    ASSERT_EQ(false, ret_false());
 }

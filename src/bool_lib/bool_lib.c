@@ -7,5 +7,5 @@ bool ret_true(void)
 
 bool ret_false(void)
 {
-    return true;
+    return false;
 }
