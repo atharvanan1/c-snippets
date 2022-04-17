@@ -22,6 +22,7 @@ string_insert(CString string, size_t pos, const char character)
 {
     size_t len = strlen(string);
     if (pos > len) {
+        errno = ENOMEM;
         return -1;
     }
     char* new_string = (char *)realloc(string, len);
@@ -47,10 +48,11 @@ string_insert(CString string, size_t pos, const char character)
 }
 
 int
-string_insert_str(CString string, size_t pos, char* ins_str)
+string_insert_str(CString string, size_t pos, const char* ins_str)
 {
     size_t len = strlen(string);
     if (pos > len) {
+        errno = ENOMEM;
         return -1;
     }
     size_t ins_str_len = strlen(ins_str);
