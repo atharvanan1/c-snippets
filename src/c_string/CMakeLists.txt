@@ -1,0 +1,1 @@
+add_library(c_string_lib c_string.c)
