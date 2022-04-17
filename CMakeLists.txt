@@ -8,7 +8,7 @@ configure_file(Config.h.in Config.h)
 set(CMAKE_C_STANDARD 11)
 set(CMAKE_C_STANDARD_REQUIRED True)
 
-option(BUILD_TEST "Build testing executables" ON)
+option(BUILD_TEST "Build testing executables" OFF)
 if(BUILD_TEST)
     # Testing framework
     include(FetchContent)
@@ -23,21 +23,21 @@ if(BUILD_TEST)
     enable_testing()
 
     add_executable(
-        bool_test
-        tests/test_bool_test.cpp
+        c_string_test
+        ${PROJECT_SOURCE_DIR}/tests/test_c_string.cpp
     )
 
     target_include_directories(
-        bool_test PUBLIC
-        "${PROJECT_SOURCE_DIR}/src/bool_lib"
+        c_string_test PUBLIC
+        "${PROJECT_SOURCE_DIR}/src/c_string"
     )
 
     target_link_libraries(
-        bool_test
+        c_string_test
         gtest_main
-        bool_lib
+        c_string_lib
     )
 
     include(GoogleTest)
-    gtest_discover_tests(bool_test)
+    gtest_discover_tests(c_string_test)
 endif()
