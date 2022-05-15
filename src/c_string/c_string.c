@@ -1,5 +1,5 @@
 #include "c_string.h"
-#include "errno.h"
+#include <errno.h>
 #include <string.h>
 
 /*
@@ -16,21 +16,21 @@ CString
 string_new(const char* string)
 {
     CString new_string = NULL;
-    size_t len = strlen(string);
-    new_string = (char *) malloc(sizeof(char) * len);
+    size_t alloc_len = strlen(string) + 1;     // As strlen returns length without '\0'
+    new_string = (char *) malloc(sizeof(char) * alloc_len);
     if (new_string == NULL) {
         free(new_string);
         errno = ENOMEM;
         return NULL;
     }
-    memcpy(new_string, string, len);
+    strcpy(new_string, string);
     return new_string;
 }
 
 /*
  * string_insert
  *
- * string: CString type
+ * string_ptr: pointer to the CString type
  * pos: 0-indexed position
  * character: character to insert
  *
@@ -44,29 +44,29 @@ string_new(const char* string)
  * errno will be set on error
  */
 int
-string_insert(CString string, size_t pos, const char character)
+string_insert(CString* string_ptr, size_t pos, const char character)
 {
-    size_t len = strlen(string);
-    if (pos > len) {
-        errno = ENOMEM;
+    size_t alloc_len = strlen(*string_ptr) + 1;     // As strlen returns length without '\0'
+    if (pos > alloc_len) {
+        errno = EINVAL;
         return -1;
     }
-    char* new_string = (char *)realloc(string, len);
+    CString new_string = (CString) realloc(*string_ptr, alloc_len + 1);
     if (new_string == NULL) {
         errno = ENOMEM;
         return -1;
-    }   
+    }
 
-    char* temp = (char*) malloc(sizeof(char) * len - pos);
+    char* temp = (char*) malloc(sizeof(char) * alloc_len - pos);
     if (temp == NULL) {
         errno = ENOMEM;
         return -1;
     }
 
-    memcpy(temp, new_string + pos, len - pos);
+    strcpy(temp, new_string + pos);
     new_string[pos] = character;
-    memcpy(new_string + pos + 1, temp, len - pos);
-    string = new_string;
+    strcpy(new_string + pos + 1, temp);
+    *string_ptr = new_string;
 
     if (temp != NULL)
         free(temp);
@@ -76,7 +76,7 @@ string_insert(CString string, size_t pos, const char character)
 /*
  * string_insert
  *
- * string: CString type
+ * string_ptr: pointer to the CString type
  * pos: 0-indexed position
  * ins_str: character buffer to copy
  *
@@ -90,32 +90,31 @@ string_insert(CString string, size_t pos, const char character)
  * errno will be set on error
  */
 int
-string_insert_str(CString string, size_t pos, const char* ins_str)
+string_insert_str(CString* string_ptr, size_t pos, const char* ins_str)
 {
-    size_t len = strlen(string);
-    if (pos > len) {
+    size_t alloc_len = strlen(*string_ptr) + 1;      // As strlen returns length without '\0'
+    if (pos > alloc_len) {
         errno = ENOMEM;
         return -1;
     }
-    size_t ins_str_len = strlen(ins_str);
-    char* new_string = (char *)realloc(string, len + ins_str_len);
+    size_t ins_str_len = strlen(ins_str);    // We don't need null character from here
+    CString new_string = (CString) realloc(*string_ptr, alloc_len + ins_str_len);
     if (new_string == NULL) {
         errno = ENOMEM;
         return -1;
     }
 
-    char* temp = (char*) malloc(sizeof(char) * len - pos);
+    char* temp = (char*) malloc(sizeof(char) * alloc_len - pos);
     if (temp == NULL) {
         errno = ENOMEM;
         return -1;
     }
-    memcpy(temp, new_string + pos, len - pos);
-    memcpy(new_string + pos, ins_str, ins_str_len);
-    memcpy(new_string + pos + ins_str_len, temp, len - pos);
-    string = new_string;
+    strcpy(temp, new_string + pos);
+    strcpy(new_string + pos, ins_str);
+    strcpy(new_string + pos + ins_str_len, temp);
+    *string_ptr = new_string;
 
-    if (temp != NULL)
-        free(temp);
+    free(temp);
     return 0;
 }
 
