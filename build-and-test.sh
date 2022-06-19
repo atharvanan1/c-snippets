@@ -11,5 +11,5 @@ fi
 cmake -S . -B build -D BUILD_TEST=ON
 cmake --build build
 pushd build
-ctest
+ctest $@
 popd
