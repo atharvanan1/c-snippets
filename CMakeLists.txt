@@ -26,12 +26,14 @@ if(BUILD_TEST)
         c_snippets_test
         ${PROJECT_SOURCE_DIR}/tests/test_c_string.cpp
         ${PROJECT_SOURCE_DIR}/tests/test_memfunc.cpp
+        ${PROJECT_SOURCE_DIR}/tests/test_linked_list.cpp
     )
 
     target_include_directories(
         c_snippets_test PUBLIC
         "${PROJECT_SOURCE_DIR}/src/c_string"
         "${PROJECT_SOURCE_DIR}/src/memfunc"
+        "${PROJECT_SOURCE_DIR}/src/linked_list"
     )
 
     target_link_libraries(
@@ -39,6 +41,7 @@ if(BUILD_TEST)
         gtest_main
         c_string_lib
         memfunc_lib
+        linked_list_lib
     )
 
     include(GoogleTest)
